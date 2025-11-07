@@ -21,15 +21,17 @@ if (connStr.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
     var uri = new Uri(connStr);
     var userInfo = uri.UserInfo.Split(':');
     var npgBuilder = new Npgsql.NpgsqlConnectionStringBuilder
+  
     {
         Host = uri.Host,
-        Port = uri.Port,
+        Port = uri.Port > 0 ? uri.Port : 5432,
         Username = userInfo[0],
         Password = userInfo.Length > 1 ? userInfo[1] : "",
         Database = uri.AbsolutePath.TrimStart('/'),
         SslMode = Npgsql.SslMode.Require,
         TrustServerCertificate = true
     };
+    
     connStr = npgBuilder.ToString();
 }
 
