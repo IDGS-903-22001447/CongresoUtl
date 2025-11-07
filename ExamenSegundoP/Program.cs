@@ -51,8 +51,18 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<CongresoDbContext>();
-    db.Database.EnsureCreated();
+
+    try
+    {
+        db.Database.EnsureCreated(); // Crea la tabla si no existe
+        Console.WriteLine("Base de datos y tabla participantes verificadas/creadas correctamente.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error al crear la base de datos: {ex.Message}");
+    }
 }
+
 
 
 app.UseSwagger();
