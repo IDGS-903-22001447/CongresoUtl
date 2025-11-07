@@ -1,0 +1,11 @@
+﻿# Ignorar directorios de Visual Studio/IDE
+.vs/
+
+# Ignorar archivos comunes de compilación de .NET/Visual Studio (si aplica)
+*.obj
+*.exe
+*.dll
+*.pdb
+bin/
+obj/
+
