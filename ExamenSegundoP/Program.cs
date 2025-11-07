@@ -29,7 +29,7 @@ if (connStr.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
         Password = userInfo.Length > 1 ? userInfo[1] : "",
         Database = uri.AbsolutePath.TrimStart('/'),
         SslMode = Npgsql.SslMode.Require,
-        TrustServerCertificate = true
+        
     };
     
     connStr = npgBuilder.ToString();

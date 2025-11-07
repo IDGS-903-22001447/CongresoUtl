@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EditorConfigFiles Remove="C:\Users\Paulina\Desktop\ING10\Desarrollo Movil\ExamenSegundoP\ExamenSegundoP\.editorconfig" />
   </ItemGroup>
 
