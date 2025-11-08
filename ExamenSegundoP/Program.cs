@@ -10,7 +10,8 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
                 "http://localhost:5173",                    
-                "https://congresoutl.onrender.com"           
+                "https://congresoutl.onrender.com" ,
+                "https://congresoutlexamen.netlify.app"
             )
             .AllowAnyHeader()
             .AllowAnyMethod();
