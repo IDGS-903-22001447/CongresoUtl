@@ -3,10 +3,23 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins(
+                "http://localhost:5173",                    
+                "https://congresoutl.onrender.com"           
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 
 var connStr = builder.Configuration.GetConnectionString("DefaultConnection")
               ?? Environment.GetEnvironmentVariable("DATABASE_URL");
-
 
 if (string.IsNullOrEmpty(connStr))
 {
@@ -20,8 +33,8 @@ if (connStr.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
 
     var uri = new Uri(connStr);
     var userInfo = uri.UserInfo.Split(':');
+
     var npgBuilder = new Npgsql.NpgsqlConnectionStringBuilder
-  
     {
         Host = uri.Host,
         Port = uri.Port > 0 ? uri.Port : 5432,
@@ -29,12 +42,11 @@ if (connStr.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
         Password = userInfo.Length > 1 ? userInfo[1] : "",
         Database = uri.AbsolutePath.TrimStart('/'),
         SslMode = Npgsql.SslMode.Require,
-        
+      
     };
-    
+
     connStr = npgBuilder.ToString();
 }
-
 
 builder.Services.AddDbContext<CongresoDbContext>(options =>
     options.UseNpgsql(connStr));
@@ -46,29 +58,35 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 var app = builder.Build();
+
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<CongresoDbContext>();
-
     try
     {
-        db.Database.Migrate();
+        db.Database.Migrate(); 
         Console.WriteLine(" Migraciones aplicadas correctamente.");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Error al aplicar migraciones: {ex.Message}");
+        Console.WriteLine($" Error al aplicar migraciones: {ex.Message}");
     }
 }
 
 
+app.UseCors("AllowFrontend"); 
 
-
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment() || true)
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();
